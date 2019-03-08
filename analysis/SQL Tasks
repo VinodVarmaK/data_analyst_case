@@ -1,0 +1,28 @@
+#Question-1
+select marketing_channel_id, sum(spendings) as Spend_per_channel from spendings
+where report_date between '2016-12-01' and '2016-12-31' and is_paid_channel = 'true'
+group by marketing_channel_id
+order by Spend_per_channel desc
+
+
+#Question-2
+select signup_country_code, subscription_Total, Spend_Total, (Spend_Total/subscription_Total) as Avg_Cost from 
+(select signup_country_code, sum(subscription_count) as subscription_Total from subscriptions
+group by signup_country_code  ) a 
+inner join 
+(select country_code, sum(spendings) as Spend_Total from spendings
+group by country_code ) b 
+on a.signup_country_code = b.country_code
+group by signup_country_code 
+order by  Avg_Cost desc
+
+
+#Question-3
+select Day1, Avg_Spend, Avg_Revenue from 
+(SELECT dayname(report_date) as Day1 , avg(spendings) as Avg_Spend  from spendings 
+group by Day1 ) a
+inner join 
+(SELECT dayname(subscription_date) as Day2, avg(net_revenue) as Avg_Revenue from subscriptions
+group by Day2 ) b
+on a.Day1 = b.Day2
+group by Day1 
